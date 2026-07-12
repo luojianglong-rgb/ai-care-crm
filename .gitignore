@@ -1,0 +1,75 @@
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ---------- Virtual env ----------
+.venv/
+venv/
+env/
+ENV/
+
+# ---------- IDE ----------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ---------- OS ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# ---------- Project secrets & runtime data ----------
+# Local config — may contain real API keys / channels / endpoints
+src/config.yaml
+# SQLite database (may contain real customer data)
+src/wellness_crm.db
+src/*.db
+src/*.db-journal
+# Database backups
+backups/
+# Runtime logs
+logs/
+*.log
+# Auto-generated automation log
+src/@AutomationLog.txt
+
+# ---------- Build artifacts ----------
+# PyInstaller output (EXE + bundled data)
+dist/
+*.exe
+*.spec.bak
+build/
+
+# ---------- Frontend ----------
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+frontend/.env
+frontend/.env.local
+
+# ---------- Local memory & design scratch ----------
+# Claude project memory (user-private notes)
+memory/
+# Separately maintained design folder (its own repo scope)
+/wellness-crm-design/
+
+# ---------- Misc temp ----------
+*.tmp
+*.bak
+*.orig
+*.rej
+.env
+.env.local

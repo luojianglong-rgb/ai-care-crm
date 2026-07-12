@@ -1,0 +1,36 @@
+# AI-Care CRM Mac 依赖清单
+# 排除 Windows 专用模块（pywinauto, uiautomation, pywin32）
+
+# Web 框架
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+pydantic>=2.0.0
+
+# 数据库
+sqlalchemy>=2.0.0
+
+# 认证与安全
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+bcrypt>=4.0.0
+
+# 配置
+pyyaml>=6.0
+
+# AI 大模型（OpenAI SDK 兼容）
+openai>=1.0.0
+
+# 定时任务
+apscheduler>=3.10.0
+
+# Excel 导出
+openpyxl>=3.1.0
+
+# ML307A 短信猫（USB-Serial）
+pyserial>=3.5
+
+# 打包工具
+pyinstaller>=6.0.0
+
+# 可选：Mac DMG 制作工具
+# create-dmg (通过 brew install create-dmg 安装)

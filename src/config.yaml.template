@@ -1,0 +1,141 @@
+# ============================================================
+# AI-Care CRM 系统配置文件
+# ============================================================
+# 说明：
+# 1. 首次启动时系统会自动生成正式配置文件
+# 2. 带 * 的字段需要用户填写或确认
+# 3. 其他字段可根据需要修改
+# ============================================================
+
+# ------ 门店基础信息 ------
+store:
+  name: "您的门店名称*"                    # [必填] 修改为您的门店名称
+  business_type: tcm_wellness             # 业态类型（无需修改）
+  # 可选值：
+  #   tcm_wellness   - 养生馆（中医体质辨识）
+  #   spa            - SPA 水疗（肤质分析）
+  #   hair_salon     - 美发沙龙（发质/头皮分析）
+  #   nail_lash      - 美甲美睫（甲型适配）
+  #   skin_care      - 皮肤管理（皮肤问题诊断）
+  #   postpartum     - 产后修复（产后体质评估）
+  #   general        - 通用模式（客户偏好分析）
+
+# ------ 业态术语自定义（可选，留空使用默认值） ------
+terminology:
+  staff_title: ""                         # 员工称谓（留空自动取默认）
+  analysis_name: ""                       # AI 分析功能名称（留空自动）
+  plan_name: ""                           # 方案名称（留空自动）
+
+# ------ 授权与额度 ------
+license:
+  key: ""                                 # 激活码（留空=免费版，可选）
+  # 激活码格式：CARE-XXXX-XXXX-XXXX-XXXX
+  # 激活码内含套餐等级（pro / business），系统自动离线验证
+
+# ------ AI 大模型配置 ------
+llm:
+  mode: direct                            # AI 调用模式：
+  # direct = 商户自带 API Key，直连大模型（推荐，零成本）
+  # proxy  = 使用开发者 Token 代理服务（商户充值即用，无需注册平台）
+
+  # --- mode=direct 时使用（商户自己的 API Key） ---
+  api_key: ""                             # [必填] 大模型 API Key（去对应平台官网注册）
+  provider: deepseek                      # 模型提供商（推荐 deepseek，性价比最高）
+  model: "deepseek-chat"                  # 具体模型名称
+
+  # --- mode=proxy 时使用（开发者 Token 代理） ---
+  proxy:
+    endpoint: ""                          # 代理网关地址（由开发者提供）
+    merchant_token: ""                    # 商户充值账号 Token（由开发者分配）
+    # 使用代理模式时，上方 provider/api_key/model 无需填写
+
+  temperature: 0.3                        # 生成温度（分析类建议 0.2，文案类建议 0.5）
+  max_tokens: 2000                        # 单次最大 token 数
+  timeout: 30                             # 请求超时（秒）
+
+  # 国内大模型 Provider 预置配置（OpenAI 兼容协议）
+  # 商户只需修改上方 provider + api_key + model，base_url 自动匹配
+  providers:
+    deepseek:
+      base_url: "https://api.deepseek.com/v1"
+      default_model: "deepseek-chat"
+      note: "性价比最高，推荐首选"
+    qwen:
+      base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      default_model: "qwen-plus"
+      note: "阿里云通义千问"
+    glm:
+      base_url: "https://open.bigmodel.cn/api/paas/v4"
+      default_model: "glm-4-flash"
+      note: "智谱清言，Flash 模型免费"
+    kimi:
+      base_url: "https://api.moonshot.cn/v1"
+      default_model: "moonshot-v1-8k"
+      note: "月之暗面"
+    baichuan:
+      base_url: "https://api.baichuan-ai.com/v1"
+      default_model: "Baichuan4"
+      note: "百川智能"
+    spark:
+      base_url: "https://spark-api-open.xf-yun.com/v1"
+      default_model: "generalv3.5"
+      note: "讯飞星火"
+
+# ------ 触达渠道配置 ------
+channels:
+  default: wechat_cli                    # 默认发送渠道（个人微信 CLI）
+
+  # 个人微信 CLI（基于 WeChatFerry 等本地 RPC 方案）
+  # 注意：非官方协议存在封号风险，请只在商户机器本地使用
+  wechat_cli:
+    enabled: false                        # 是否启用个人微信渠道
+    host: 127.0.0.1                       # wcferry 等本地 RPC 地址
+    port: 9999                            # 本地 RPC 端口
+    timeout: 10                           # HTTP 超时（秒）
+    dry_run: true                         # 测试模式：只记录日志，不真实发送
+    phone_cache_ttl_min: 1440             # 通讯录缓存 TTL（分钟，0=每次刷新）
+    # 兼容不同 RPC 实现暴露的接口路径（一般无需修改）
+    login_check_path: "/login"
+    friends_path: "/friends"
+    send_text_path: "/send-text"
+
+  # ML307A 短信猫（自动降级兜底）
+  ml307a:
+    enabled: true                         # 是否启用短信猫（需购买硬件）
+    port: ''                              # 串口号，留空自动扫描
+    baudrate: 115200                      # 波特率
+    sim_pin: ''                           # SIM 卡 PIN 码（如有）
+    carrier: auto                         # 运营商：auto(自动检测) / mobile(移动) / unicom(联通) / telecom(电信)
+                                          # 通常设为 auto 即可，系统自动获取短信中心号码
+    smsc: ''                              # 短信中心号码（留空自动获取，仅电信卡可能需要手动填写）
+                                          # 电信卡示例：+8613800100500（北京电信）
+                                          # 联通卡示例：+8613010112500（北京联通）
+                                          # 移动卡示例：+8613800100500（北京移动）
+    retry_count: 2                        # 失败重试次数
+
+# ------ 剧本引擎配置 ------
+playbook:
+  scan_hour: 6                            # 每日剧本扫描时间（小时，24h 制）
+  send_interval_min: 10                   # 发送队列轮询间隔（分钟）
+  send_delay_min: 30                      # 单条发送最小间隔（秒，模拟人工）
+  send_delay_max: 90                      # 单条发送最大间隔（秒）
+  auto_pause_enabled: true                # 异常自动暂停
+  consecutive_failure_threshold: 5        # 连续失败阈值
+  pause_duration_minutes: 30              # 暂停时长（分钟）
+  daily_send_limit: 100                   # 每日发送上限
+  sensitive_keywords: []                  # 敏感词黑名单
+  blacklist_phones: []                    # 黑名单手机号
+
+# ------ 天气 API 配置（用于天气触发剧本，可选） ------
+weather:
+  enabled: false                          # 是否启用天气触发
+  api_key: ""                             # 和风天气 API Key（免费）
+  region: "101010100"                     # 城市代码（默认北京）
+
+# ------ 系统运行配置 ------
+server:
+  debug: false                            # 调试模式（生产环境请设为 false）
+  dev_mode: false                         # 开发模式（生产环境请设为 false）
+                                          # dev_mode=true 时绕过会员等级限制，可测试所有功能
+  host: "0.0.0.0"                         # 监听地址（0.0.0.0=允许局域网访问）
+  port: 8888                              # 服务端口（生产环境默认8888）
